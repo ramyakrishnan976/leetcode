@@ -1,0 +1,31 @@
+int trap(int* height, int heightSize) {
+    if (heightSize == 0) return 0;
+    
+    int left = 0;
+    int right = heightSize - 1;
+    int left_max = 0;
+    int right_max = 0;
+    int total_water = 0;
+    
+    while (left < right) {
+        if (height[left] < height[right]) {
+            // Left side is smaller, so it dictates the maximum water boundary
+            if (height[left] >= left_max) {
+                left_max = height[left];
+            } else {
+                total_water += left_max - height[left];
+            }
+            left++;
+        } else {
+            // Right side is smaller or equal, dictating the boundary
+            if (height[right] >= right_max) {
+                right_max = height[right];
+            } else {
+                total_water += right_max - height[right];
+            }
+            right--;
+        }
+    }
+    
+    return total_water;
+}
