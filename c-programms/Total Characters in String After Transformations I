@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define MOD 1000000007
+
+int lengthAfterTransformations(char* s, int t) {
+    // Array to track the frequency count of each lowercase letter (0 to 25)
+    long long counts[26] = {0};
+    long long next_counts[26] = {0};
+
+    // Step 1: Initialize frequency map with the starting string characters
+    for (int i = 0; s[i] != '\0'; i++) {
+        counts[s[i] - 'a']++;
+    }
+
+    // Step 2: Simulate character generation layer by layer for t steps
+    for (int step = 0; step < t; step++) {
+        // Reset the next round's frequencies to 0
+        memset(next_counts, 0, sizeof(next_counts));
+
+        // Advance characters 'a' through 'y' to the next letter
+        for (int i = 0; i < 25; i++) {
+            next_counts[i + 1] = counts[i];
+        }
+
+        // Handle the 'z' split rule: 'z' transforms into "ab"
+        long long z_count = counts[25];
+        next_counts[0] = (next_counts[0] + z_count) % MOD; // 'a'
+        next_counts[1] = (next_counts[1] + z_count) % MOD; // 'b'
+
+        // Roll over next_counts into counts for the next turn
+        memcpy(counts, next_counts, sizeof(counts));
+    }
+
+    // Step 3: Accumulate the final frequencies to compute total resulting length
+    long long total_length = 0;
+    for (int i = 0; i < 26; i++) {
+        total_length = (total_length + counts[i]) % MOD;
+    }
+
+    return (int)total_length;
+}
